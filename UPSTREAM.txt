@@ -1,0 +1,5 @@
+analytics-service 212d7e9b7e50f881c4022bc9e8d2722f08a2a3e2
+auth-service 56e447f83409bf35b22ef04a9e39c2e30df9af33
+evaluation-service 5e8ade059f69650d2e8cfbefad0a83cfac25f0a9
+flag-service 21052b1abcf209ea6848350bdd9928b80b7f86fe
+targeting-service dd9568a583fa409b88a446685779d9e581282fd2
