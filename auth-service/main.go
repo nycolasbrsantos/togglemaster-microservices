@@ -2,13 +2,12 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/jackc/pgx/v4/stdlib"
 	"github.com/joho/godotenv"
+	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
 // App struct (para injeção de dependência)
