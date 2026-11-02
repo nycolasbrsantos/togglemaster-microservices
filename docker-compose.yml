@@ -1,0 +1,92 @@
+services:
+  postgres-auth:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: auth
+      POSTGRES_PASSWORD: ${POSTGRES_AUTH_PASSWORD}
+      POSTGRES_DB: auth_db
+    volumes:
+      - postgres-auth-data:/var/lib/postgresql/data
+      - ./auth-service/db/init.sql:/docker-entrypoint-initdb.d/01-auth.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U auth -d auth_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  postgres-flags:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: flags
+      POSTGRES_PASSWORD: ${POSTGRES_FLAGS_PASSWORD}
+      POSTGRES_DB: flags_db
+    volumes:
+      - postgres-flags-data:/var/lib/postgresql/data
+      - ./flag-service/db/init.sql:/docker-entrypoint-initdb.d/01-flags.sql:ro
+      - ./db/postgres-flags/02-targeting.sql:/docker-entrypoint-initdb.d/02-targeting.sql:ro
+      - ./targeting-service/db/init.sql:/sql/targeting-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U flags -d flags_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7.2-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    working_dir: /home/dynamodblocal
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./docker/dynamodb:/home/dynamodblocal/data
+  auth-service:
+    build: ./auth-service
+    image: togglemaster/auth-service:dev
+    environment:
+      PORT: "8001"
+      DATABASE_URL: postgres://auth:${POSTGRES_AUTH_PASSWORD}@postgres-auth:5432/auth_db
+      MASTER_KEY: ${MASTER_KEY}
+    ports:
+      - "8001:8001"
+    depends_on:
+      postgres-auth:
+        condition: service_healthy
+  flag-service:
+    build: ./flag-service
+    image: togglemaster/flag-service:dev
+    environment:
+      PORT: "8002"
+      DATABASE_URL: postgres://flags:${POSTGRES_FLAGS_PASSWORD}@postgres-flags:5432/flags_db
+      AUTH_SERVICE_URL: http://auth-service:8001
+    ports:
+      - "8002:8002"
+    depends_on:
+      postgres-flags:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+  targeting-service:
+    build: ./targeting-service
+    image: togglemaster/targeting-service:dev
+    environment:
+      PORT: "8003"
+      DATABASE_URL: postgres://flags:${POSTGRES_FLAGS_PASSWORD}@postgres-flags:5432/targeting_db
+      AUTH_SERVICE_URL: http://auth-service:8001
+    ports:
+      - "8003:8003"
+    depends_on:
+      postgres-flags:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+volumes:
+  postgres-auth-data:
+  postgres-flags-data:

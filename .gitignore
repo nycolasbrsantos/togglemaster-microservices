@@ -4,3 +4,5 @@
 *.pem
 __pycache__/
 *.pyc
+
+docker/
