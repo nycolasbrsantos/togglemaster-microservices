@@ -87,6 +87,48 @@ services:
         condition: service_healthy
       auth-service:
         condition: service_started
+
+  evaluation-service:
+    build: ./evaluation-service
+    image: togglemaster/evaluation-service:dev
+    environment:
+      PORT: "8004"
+      REDIS_URL: redis://redis:6379
+      FLAG_SERVICE_URL: http://flag-service:8002
+      TARGETING_SERVICE_URL: http://targeting-service:8003
+      SERVICE_API_KEY: ${SERVICE_API_KEY}
+      AWS_SQS_URL: ${AWS_SQS_URL}
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}
+    ports:
+      - "8004:8004"
+    depends_on:
+      redis:
+        condition: service_healthy
+      flag-service:
+        condition: service_started
+      targeting-service:
+        condition: service_started
+  analytics-service:
+    build: ./analytics-service
+    image: togglemaster/analytics-service:dev
+    environment:
+      PORT: "8005"
+      AWS_SQS_URL: ${AWS_SQS_URL}
+      AWS_DYNAMODB_TABLE: ToggleMasterAnalytics
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}
+      AWS_ENDPOINT_URL_DYNAMODB: http://dynamodb-local:8000
+    ports:
+      - "8005:8005"
+    depends_on:
+      dynamodb-local:
+        condition: service_started  
+
 volumes:
   postgres-auth-data:
   postgres-flags-data:
