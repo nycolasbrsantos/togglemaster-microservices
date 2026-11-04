@@ -1,0 +1,59 @@
+# Inicializa o RDS do auth-service com o db/init.sql do proprio servico.
+# Por que um Job: o RDS fica em sub-rede privada, sem acesso de fora da VPC;
+# o pod roda dentro do cluster e alcanca o RDS. Reusa o DATABASE_URL do
+# Secret auth-service-secret (aplicar o Secret antes). O init.sql usa IF NOT EXISTS,
+# entao rodar de novo nao quebra nada.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-service-db-init-sql
+  namespace: auth
+data:
+  init.sql: |
+    CREATE TABLE IF NOT EXISTS api_keys (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+
+        -- key_hash armazena o hash SHA-256 da chave, que tem 64 caracteres hexadecimais
+        key_hash VARCHAR(64) NOT NULL UNIQUE, 
+
+        is_active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: auth-service-db-init
+  namespace: auth
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: psql
+          image: postgres:17-alpine
+          command: ["sh", "-c", "psql \"$DATABASE_URL\" -v ON_ERROR_STOP=1 -f /sql/init.sql && psql \"$DATABASE_URL\" -c '\\dt'"]
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-secret
+                  key: DATABASE_URL
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          volumeMounts:
+            - name: sql
+              mountPath: /sql
+              readOnly: true
+      volumes:
+        - name: sql
+          configMap:
+            name: auth-service-db-init-sql

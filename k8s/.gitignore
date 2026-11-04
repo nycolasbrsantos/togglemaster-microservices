@@ -1,0 +1,2 @@
+# Copias dos Secrets com valores reais: nunca versionar (o repositorio e publico).
+*.local.yaml

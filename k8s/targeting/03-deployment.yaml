@@ -1,0 +1,54 @@
+# Deployment do targeting-service. Imagem arm64 no ECR; os nos t4g.medium tambem sao arm64,
+# por isso nao ha nodeSelector de arquitetura.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: targeting-service
+  namespace: targeting
+  labels:
+    app: targeting-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: targeting-service
+  template:
+    metadata:
+      labels:
+        app: targeting-service
+    spec:
+      containers:
+        - name: targeting-service
+          image: 907379312718.dkr.ecr.us-east-1.amazonaws.com/targeting-service:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8003
+          envFrom:
+            - configMapRef:
+                name: targeting-service-config
+            - secretRef:
+                name: targeting-service-secret
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 2
+            failureThreshold: 3

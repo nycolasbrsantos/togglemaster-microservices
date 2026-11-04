@@ -1,0 +1,9 @@
+# ConfigMap: configuracao NAO sensivel (porta, URLs internas do cluster, regiao).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: targeting-service-config
+  namespace: targeting
+data:
+  PORT: "8003"
+  AUTH_SERVICE_URL: "http://auth-service.auth.svc.cluster.local:8001"

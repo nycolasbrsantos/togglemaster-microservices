@@ -1,0 +1,10 @@
+# ConfigMap: configuracao NAO sensivel (porta, URLs internas do cluster, regiao).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: analytics-service-config
+  namespace: analytics
+data:
+  PORT: "8005"
+  AWS_REGION: "us-east-1"
+  AWS_DYNAMODB_TABLE: "ToggleMasterAnalytics"

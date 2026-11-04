@@ -1,0 +1,38 @@
+# Um namespace por microsservico (PDF: "Crie sempre suas aplicacoes separando por Namespaces").
+# Isola Secrets, ConfigMaps e quotas de cada servico; a comunicacao entre eles usa o DNS
+# completo do Service: <service>.<namespace>.svc.cluster.local
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: auth
+  labels:
+    app.kubernetes.io/part-of: togglemaster
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: flag
+  labels:
+    app.kubernetes.io/part-of: togglemaster
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: targeting
+  labels:
+    app.kubernetes.io/part-of: togglemaster
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: evaluation
+  labels:
+    app.kubernetes.io/part-of: togglemaster
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: analytics
+  labels:
+    app.kubernetes.io/part-of: togglemaster

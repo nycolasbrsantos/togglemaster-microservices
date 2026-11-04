@@ -1,0 +1,21 @@
+# Ingress do evaluation-service: a rota do codigo ja e /evaluate: sem rewrite.
+# O Ingress precisa morar no mesmo namespace do Service de destino; o Nginx
+# Ingress Controller junta todos os Ingress sem host num unico Load Balancer.
+# As anotacoes valem so para este objeto, por isso o rewrite nao vaza para os outros.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: evaluation-service
+  namespace: evaluation
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /evaluate
+            pathType: Prefix
+            backend:
+              service:
+                name: evaluation-service
+                port:
+                  number: 8004

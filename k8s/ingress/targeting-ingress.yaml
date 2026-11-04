@@ -1,0 +1,24 @@
+# Ingress do targeting-service: /targeting/rules/<flag> chega como /rules/<flag> (as rotas do codigo comecam em /rules).
+# O Ingress precisa morar no mesmo namespace do Service de destino; o Nginx
+# Ingress Controller junta todos os Ingress sem host num unico Load Balancer.
+# As anotacoes valem so para este objeto, por isso o rewrite nao vaza para os outros.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: targeting-service
+  namespace: targeting
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /targeting(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: targeting-service
+                port:
+                  number: 8003

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1000" viewBox="0 0 1500 1000" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="seta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#37474f"/>
+    </marker>
+    <marker id="setaAz" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1565c0"/>
+    </marker>
+    <style>
+      .t { font-size: 14px; fill: #263238; }
+      .tb { font-size: 15px; font-weight: bold; fill: #263238; }
+      .ts { font-size: 12px; fill: #455a64; }
+      .grp { font-size: 15px; font-weight: bold; }
+      .box { fill: #ffffff; stroke: #546e7a; stroke-width: 1.5; rx: 8; }
+      .svc { fill: #e3f2fd; stroke: #1565c0; stroke-width: 1.5; rx: 8; }
+      .db { fill: #fff3e0; stroke: #e65100; stroke-width: 1.5; rx: 8; }
+      .ext { fill: #f3e5f5; stroke: #6a1b9a; stroke-width: 1.5; rx: 8; }
+      .ln { stroke: #37474f; stroke-width: 1.6; fill: none; marker-end: url(#seta); }
+      .lnd { stroke: #37474f; stroke-width: 1.6; fill: none; stroke-dasharray: 6 4; marker-end: url(#seta); }
+      .lnb { stroke: #1565c0; stroke-width: 1.6; fill: none; marker-end: url(#setaAz); }
+      .lbl { font-size: 11.5px; fill: #37474f; }
+    </style>
+  </defs>
+
+  <rect width="1500" height="1000" fill="#fafafa"/>
+  <text x="20" y="28" class="tb" font-size="18">ToggleMaster Fase 2: arquitetura na AWS (us-east-1, AWS Academy Learner Lab)</text>
+
+  <!-- Usuario -->
+  <rect x="20" y="175" width="130" height="64" class="box"/>
+  <text x="85" y="202" text-anchor="middle" class="tb">Usuário</text>
+  <text x="85" y="222" text-anchor="middle" class="ts">curl / hey</text>
+
+  <!-- Regiao AWS -->
+  <rect x="170" y="45" width="1310" height="935" fill="none" stroke="#ff9800" stroke-width="2" rx="12"/>
+  <text x="185" y="68" class="grp" fill="#e65100">AWS us-east-1</text>
+
+  <!-- VPC -->
+  <rect x="195" y="85" width="1015" height="880" fill="#f1f8e9" stroke="#558b2f" stroke-width="2" rx="12"/>
+  <text x="210" y="108" class="grp" fill="#33691e">VPC togglemaster-vpc 10.0.0.0/16 · 2 AZs (us-east-1a, us-east-1b) · Internet Gateway · sem NAT</text>
+
+  <!-- Sub-redes publicas -->
+  <rect x="215" y="122" width="975" height="535" fill="#e8f5e9" stroke="#2e7d32" stroke-dasharray="6 4" stroke-width="1.5" rx="10"/>
+  <text x="230" y="143" class="grp" fill="#1b5e20">Sub-redes públicas 10.0.0.0/20 e 10.0.16.0/20 (IP público automático, tag kubernetes.io/role/elb)</text>
+
+  <!-- LB -->
+  <rect x="235" y="175" width="180" height="70" class="box"/>
+  <text x="325" y="200" text-anchor="middle" class="tb">Load Balancer</text>
+  <text x="325" y="219" text-anchor="middle" class="ts">Service LoadBalancer</text>
+  <text x="325" y="235" text-anchor="middle" class="ts">do ingress-nginx</text>
+
+  <!-- EKS -->
+  <rect x="435" y="155" width="740" height="485" fill="#ffffff" stroke="#0d47a1" stroke-width="2" rx="10"/>
+  <text x="450" y="176" class="grp" fill="#0d47a1">EKS togglemaster-cluster 1.37</text>
+  <text x="450" y="194" class="ts">Managed Node Group: 2x t4g.medium arm64 (min 1, máx 4), role LabRole</text>
+
+  <rect x="455" y="208" width="230" height="58" class="box"/>
+  <text x="570" y="231" text-anchor="middle" class="tb">Ingress (classe nginx)</text>
+  <text x="570" y="251" text-anchor="middle" class="ts">/auth /flags /targeting /evaluate</text>
+
+  <rect x="975" y="208" width="180" height="50" class="box"/>
+  <text x="1065" y="238" text-anchor="middle" class="t">metrics-server</text>
+
+  <!-- Servicos linha 1 -->
+  <rect x="455" y="320" width="195" height="72" class="svc"/>
+  <text x="552" y="342" text-anchor="middle" class="ts">ns auth</text>
+  <text x="552" y="362" text-anchor="middle" class="tb">auth-service :8001</text>
+  <text x="552" y="380" text-anchor="middle" class="ts">Go · 2 réplicas</text>
+
+  <rect x="680" y="320" width="195" height="72" class="svc"/>
+  <text x="777" y="342" text-anchor="middle" class="ts">ns flag</text>
+  <text x="777" y="362" text-anchor="middle" class="tb">flag-service :8002</text>
+  <text x="777" y="380" text-anchor="middle" class="ts">Python/Flask</text>
+
+  <rect x="905" y="320" width="215" height="72" class="svc"/>
+  <text x="1012" y="342" text-anchor="middle" class="ts">ns targeting</text>
+  <text x="1012" y="362" text-anchor="middle" class="tb">targeting-service :8003</text>
+  <text x="1012" y="380" text-anchor="middle" class="ts">Python/Flask</text>
+
+  <!-- Servicos linha 2 -->
+  <rect x="540" y="470" width="225" height="78" class="svc"/>
+  <text x="652" y="492" text-anchor="middle" class="ts">ns evaluation</text>
+  <text x="652" y="512" text-anchor="middle" class="tb">evaluation-service :8004</text>
+  <text x="652" y="531" text-anchor="middle" class="ts">Go · HPA CPU 70% (1 a 5)</text>
+
+  <rect x="880" y="470" width="225" height="78" class="svc"/>
+  <text x="992" y="492" text-anchor="middle" class="ts">ns analytics</text>
+  <text x="992" y="512" text-anchor="middle" class="tb">analytics-service :8005</text>
+  <text x="992" y="531" text-anchor="middle" class="ts">worker SQS · HPA CPU 70%</text>
+
+  <!-- Sub-redes privadas -->
+  <rect x="215" y="680" width="975" height="265" fill="#fbe9e7" stroke="#bf360c" stroke-dasharray="6 4" stroke-width="1.5" rx="10"/>
+  <text x="230" y="701" class="grp" fill="#bf360c">Sub-redes privadas 10.0.128.0/20 e 10.0.144.0/20 (sem rota para a internet) · SG togglemaster-db-sg: 5432 e 6379 só de 10.0.0.0/16</text>
+
+  <rect x="240" y="800" width="205" height="86" class="db"/>
+  <text x="342" y="828" text-anchor="middle" class="tb">RDS PostgreSQL 17.11</text>
+  <text x="342" y="848" text-anchor="middle" class="t">auth_db</text>
+  <text x="342" y="868" text-anchor="middle" class="ts">db.t4g.micro · Single-AZ</text>
+
+  <rect x="470" y="800" width="205" height="86" class="db"/>
+  <text x="572" y="828" text-anchor="middle" class="tb">RDS PostgreSQL 17.11</text>
+  <text x="572" y="848" text-anchor="middle" class="t">flags_db</text>
+  <text x="572" y="868" text-anchor="middle" class="ts">db.t4g.micro · Single-AZ</text>
+
+  <rect x="700" y="800" width="205" height="86" class="db"/>
+  <text x="802" y="828" text-anchor="middle" class="tb">RDS PostgreSQL 17.11</text>
+  <text x="802" y="848" text-anchor="middle" class="t">targeting_db</text>
+  <text x="802" y="868" text-anchor="middle" class="ts">db.t4g.micro · Single-AZ</text>
+
+  <rect x="935" y="800" width="225" height="86" class="db"/>
+  <text x="1047" y="828" text-anchor="middle" class="tb">ElastiCache Redis OSS 7.1</text>
+  <text x="1047" y="848" text-anchor="middle" class="t">cache.t4g.micro · 0 réplicas</text>
+  <text x="1047" y="868" text-anchor="middle" class="ts">cache-aside, TTL 30 s</text>
+
+  <!-- Servicos regionais fora da VPC -->
+  <text x="1240" y="150" class="grp" fill="#6a1b9a">Serviços regionais</text>
+  <rect x="1235" y="175" width="225" height="80" class="ext"/>
+  <text x="1347" y="203" text-anchor="middle" class="tb">ECR</text>
+  <text x="1347" y="223" text-anchor="middle" class="ts">5 repositórios imutáveis</text>
+  <text x="1347" y="240" text-anchor="middle" class="ts">tag 1.0.0 · arm64</text>
+
+  <rect x="1235" y="450" width="225" height="70" class="ext"/>
+  <text x="1347" y="478" text-anchor="middle" class="tb">SQS Standard</text>
+  <text x="1347" y="498" text-anchor="middle" class="ts">togglemaster-events</text>
+
+  <rect x="1235" y="590" width="225" height="80" class="ext"/>
+  <text x="1347" y="618" text-anchor="middle" class="tb">DynamoDB</text>
+  <text x="1347" y="638" text-anchor="middle" class="ts">ToggleMasterAnalytics</text>
+  <text x="1347" y="655" text-anchor="middle" class="ts">chave event_id · sob demanda</text>
+
+  <!-- Setas: entrada -->
+  <path d="M150,207 L233,207" class="ln"/>
+  <text x="158" y="198" class="lbl">HTTP</text>
+  <path d="M415,225 L453,233" class="ln"/>
+
+  <!-- Ingress para servicos -->
+  <path d="M520,266 L520,318" class="lnb"/>
+  <text x="474" y="298" class="lbl">/auth</text>
+  <path d="M640,266 L740,318" class="lnb"/>
+  <text x="690" y="290" class="lbl">/flags</text>
+  <path d="M675,262 L960,318" class="lnb"/>
+  <text x="840" y="287" class="lbl">/targeting</text>
+  <path d="M580,266 C580,420 600,430 610,468" class="lnb"/>
+  <text x="520" y="440" class="lbl">/evaluate</text>
+
+  <!-- flag e targeting validam no auth -->
+  <path d="M680,356 L652,356" class="ln"/>
+  <path d="M1012,392 C1012,440 700,440 600,394" class="ln"/>
+  <text x="880" y="415" class="lbl">/validate (fail-closed: auth fora = 503)</text>
+
+  <!-- evaluation chama flag e targeting -->
+  <path d="M700,470 L760,394" class="ln"/>
+  <path d="M745,470 L950,394" class="ln"/>
+  <text x="772" y="462" class="lbl">SERVICE_API_KEY</text>
+
+  <!-- evaluation para Redis -->
+  <path d="M700,548 L700,600 L1047,600 L1047,798" class="ln"/>
+  <text x="790" y="594" class="lbl">GET/SET EX 30 (redis://)</text>
+
+  <!-- evaluation para SQS e SQS para analytics -->
+  <path d="M640,548 L640,620 L1200,620 L1200,490 L1233,490" class="lnd"/>
+  <text x="1110" y="614" class="lbl">evento assíncrono</text>
+  <path d="M1235,470 L1107,495" class="lnd"/>
+  <text x="1120" y="462" class="lbl">long polling</text>
+  <path d="M1105,535 L1233,620" class="ln"/>
+  <text x="1140" y="590" class="lbl">grava</text>
+
+  <!-- servicos para RDS -->
+  <path d="M500,392 L500,760 L342,760 L342,798" class="ln"/>
+  <path d="M840,392 L840,650 L572,650 L572,798" class="ln"/>
+  <path d="M1100,392 L1100,450 L1170,450 L1170,770 L802,770 L802,798" class="ln"/>
+
+  <!-- ECR pull e metricas -->
+  <path d="M1235,215 L1177,215" class="lnd"/>
+  <text x="1182" y="207" class="lbl">pull</text>
+  <path d="M1040,258 L990,468" class="lnd"/>
+  <path d="M1000,258 L700,468" class="lnd"/>
+  <text x="1005" y="300" class="lbl">métricas de CPU</text>
+
+  <!-- Legenda -->
+  <rect x="20" y="300" width="140" height="190" fill="#ffffff" stroke="#b0bec5" rx="8"/>
+  <text x="30" y="322" class="tb">Legenda</text>
+  <line x1="30" y1="342" x2="70" y2="342" stroke="#1565c0" stroke-width="1.6"/>
+  <text x="76" y="346" class="lbl">Ingress</text>
+  <line x1="30" y1="364" x2="70" y2="364" stroke="#37474f" stroke-width="1.6"/>
+  <text x="76" y="368" class="lbl">síncrono</text>
+  <line x1="30" y1="386" x2="70" y2="386" stroke="#37474f" stroke-width="1.6" stroke-dasharray="6 4"/>
+  <text x="76" y="390" class="lbl">assíncrono</text>
+  <rect x="30" y="402" width="18" height="14" class="svc"/>
+  <text x="54" y="414" class="lbl">pod / Service</text>
+  <rect x="30" y="426" width="18" height="14" class="db"/>
+  <text x="54" y="438" class="lbl">banco na VPC</text>
+  <rect x="30" y="450" width="18" height="14" class="ext"/>
+  <text x="54" y="462" class="lbl">serviço regional</text>
+  <text x="30" y="480" class="lbl">ns = namespace</text>
+</svg>

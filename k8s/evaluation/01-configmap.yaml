@@ -1,0 +1,11 @@
+# ConfigMap: configuracao NAO sensivel (porta, URLs internas do cluster, regiao).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: evaluation-service-config
+  namespace: evaluation
+data:
+  PORT: "8004"
+  AWS_REGION: "us-east-1"
+  FLAG_SERVICE_URL: "http://flag-service.flag.svc.cluster.local:8002"
+  TARGETING_SERVICE_URL: "http://targeting-service.targeting.svc.cluster.local:8003"

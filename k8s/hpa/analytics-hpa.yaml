@@ -1,0 +1,22 @@
+# HPA do analytics-service por CPU media (workaround do Academy no lugar do KEDA: fila cheia > mais mensagens processadas > mais CPU > mais pods. O servico e limitado por I/O, entao a CPU sobe pouco; ver README).
+# Depende do Metrics Server e dos resources.requests do Deployment
+# (a porcentagem e calculada sobre o request de CPU).
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: analytics-service
+  namespace: analytics
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: analytics-service
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
